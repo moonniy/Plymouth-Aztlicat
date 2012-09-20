@@ -6,14 +6,14 @@ Instalación
 
 Colocar la carpeta dentro de la ruta de los temas de plymouth:
 
-Ubuntu
+### Ubuntu
 
 ```shell
 cp Aztlicat-Cafesito /lib/plymouth/themes
 update-alternatives --install /lib/plymouth/themes/default.plymouth default.plymouth /lib/plymouth/themes/Plymouth-Aztlicat 100
 ```
 
-Arch
+### Arch
 
 ```shell
 cp Aztlicat-Cafesito /usr/share/plymouth/themes
@@ -22,7 +22,7 @@ cp Aztlicat-Cafesito /usr/share/plymouth/themes
 Configuración de tema
 -------------------------------
 
-Ubuntu
+### Ubuntu
 
 Seleccionar Aztlicat-Cafesito.plymouth
 
@@ -31,7 +31,7 @@ update-alternatives --config default.plymouth
 update-initramfs -u
 ```
 
-Arch  
+### Arch  
 
 ```shell
 plymouth-set-default-theme -R Aztlicat-Cafesito
