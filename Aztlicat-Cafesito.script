@@ -14,7 +14,7 @@ else if(Plymouth.GetMode() == "shutdown")
     Nom_Base = "Aztlicat-Dormilon";
     Vel_Sprites = 0.05;
 }
-else 
+else
 {
 
     Num_Sprites = 2;
@@ -22,7 +22,7 @@ else
     Vel_Sprites = 0.05;
 }
 
-for (i = 1; i <= Num_Sprites; i++)	
+for (i = 1; i <= Num_Sprites; i++)
       Aztlicat[i] = Image(Nom_Base + i + ".png");
 
 AztlicatS = Sprite();
@@ -39,7 +39,120 @@ fun refresh ()
 	AztlicatS.SetX (Window.GetWidth() / 2 - AztlicatS.GetImage().GetWidth() / 2);
 	AztlicatS.SetY (Window.GetHeight() / 2 - AztlicatS.GetImage().GetHeight() / 2);
     }
-    
+
 Plymouth.SetRefreshFunction(refresh);
 
 status == "normal";
+
+fun dialog_setup(message)
+  {
+    local.box;
+    local.lock;
+    local.entry;
+    local.prompt;
+
+    prompt.image = Image.Text(message, 1, 1, 1);
+    box.image = Image("box.png");
+    lock.image = Image("lock.png");
+    entry.image = Image("entry.png");
+
+    box.sprite = Sprite(box.image);
+    # Leer contraseña debajo del logo Aztlicat
+    box.x = Window.GetWidth() / 2 - box.image.GetWidth () / 2;
+    box.y = Window.GetHeight() / 2 + Aztlicat[1].GetHeight() / 1.5 - box.image.GetHeight()/2;
+    box.z = 10000;
+    box.sprite.SetPosition(box.x, box.y, box.z);
+
+    lock.sprite = Sprite(lock.image);
+    lock.x = box.x + box.image.GetWidth()/2 - (lock.image.GetWidth() + entry.image.GetWidth()) / 2;
+    lock.y = box.y + box.image.GetHeight()/2 - lock.image.GetHeight()/2;
+    lock.z = box.z + 1;
+    lock.sprite.SetPosition(lock.x, lock.y, lock.z);
+
+    entry.sprite = Sprite(entry.image);
+    entry.x = lock.x + lock.image.GetWidth();
+    entry.y = box.y + box.image.GetHeight()/2 - entry.image.GetHeight()/2;
+    entry.z = box.z + 1;
+    entry.sprite.SetPosition(entry.x, entry.y, entry.z);
+
+    prompt.image = prompt.image.Scale(prompt.image.GetWidth() * 1.3, prompt.image.GetHeight() * 1.3);
+    prompt.sprite = Sprite(prompt.image);
+    prompt.sprite.SetPosition(box.image.GetWidth() - (prompt.image.GetWidth() / 2), box.y - 7 - prompt.image.GetHeight(), box.z + 1);
+    # prompt.sprite.SetPosition(10, 10, 100);
+
+    global.dialog.box = box;
+    global.dialog.lock = lock;
+    global.dialog.entry = entry;
+    global.prompt = prompt;
+    global.dialog.bullet_image = Image("bullet.png");
+    dialog_opacity (1);
+  }
+
+fun dialog_opacity(opacity)
+  {
+    dialog.box.sprite.SetOpacity (opacity);
+    dialog.lock.sprite.SetOpacity (opacity);
+    dialog.entry.sprite.SetOpacity (opacity);
+    prompt.sprite.SetOpacity (opacity);
+    for (index = 0; dialog.bullet[index]; index++)
+      {
+        dialog.bullet[index].sprite.SetOpacity(opacity);
+      }
+  }
+
+fun display_normal_callback ()
+  {
+    global.status = "normal";
+    if (global.dialog)
+      dialog_opacity (0);
+  }
+
+fun display_password_callback (prompt, bullets)
+  {
+    global.status = "password";
+
+    if (!global.dialog)
+    dialog_setup(prompt);
+    else
+    dialog_opacity(1);
+    for (index = 0; dialog.bullet[index] || index < bullets; index++)
+      {
+        if (!dialog.bullet[index])
+          {
+            dialog.bullet[index].sprite = Sprite(dialog.bullet_image);
+            dialog.bullet[index].x = dialog.entry.x + index * dialog.bullet_image.GetWidth();
+            dialog.bullet[index].y = dialog.entry.y + dialog.entry.image.GetHeight() / 2 - dialog.bullet_image.GetHeight() / 2;
+            dialog.bullet[index].z = dialog.entry.z + 1;
+            dialog.bullet[index].sprite.SetPosition(dialog.bullet[index].x, dialog.bullet[index].y, dialog.bullet[index].z);
+          }
+        if (index < bullets)
+          dialog.bullet[index].sprite.SetOpacity(1);
+        else
+          dialog.bullet[index].sprite.SetOpacity(0);
+      }
+  }
+
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+
+/* Quit */
+
+fun quit_callback ()
+{
+  logo.sprite.SetOpacity (1);
+}
+
+Plymouth.SetQuitFunction(quit_callback);
+
+/* Message */
+
+message_sprite = Sprite();
+message_sprite.SetPosition(10, 10, 10000);
+
+fun message_callback (text)
+{
+  my_image = Image.Text(text, 1, 1, 1);
+  message_sprite.SetImage(my_image);
+}
+
+Plymouth.SetMessageFunction(message_callback);
