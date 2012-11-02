@@ -1,8 +1,8 @@
 [Plymouth Theme]
-Name = Aztlicat-Cafe
+Name = Aztlicat-Cafesito
 Description = Este es mi plymouth
 ModuleName = script
 
 [script]
-ImageDir =  /home/dori/Documentos/TemasPlymouth/Aztlicat-Cafesito/
-ScriptFile = /home/dori/Documentos/TemasPlymouth/Aztlicat-Cafesito/Aztlicat-Cafesito.script
+ImageDir =  /lib/plymouth/themes/Plymouth-Aztlicat
+ScriptFile = /lib/plymouth/themes/Plymouth-Aztlicat/Aztlicat-Cafesito.script
